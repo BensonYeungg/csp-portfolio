@@ -1,0 +1,98 @@
+var todaysWord = "";
+todaysWord = selectWordle();
+console.log(todaysWord);
+setText("todaysWordle", "Today's Wordle: ");
+var count=6;
+var lettersCorrect=0;
+var usedLetters = [];
+var correct_array = todaysWord.split("");
+console.log(correct_array);
+var correctLetters = [];
+
+//buttons for user input
+//displays user guess and answer in console log
+onEvent("playButton", "click", function( ) {
+  setScreen("wordleScreen");
+});
+onEvent("guessButton", "click", function( ) {
+  var userGuess = getProperty("guessInput", "text");
+  setProperty("guessInput", "text", "");
+  console.log(userGuess);
+  console.log(answerCheck(userGuess,todaysWord));
+  var guess_array = userGuess.split("");
+  console.log(guess_array);
+  letterCheck (guess_array);
+  
+});
+function selectWordle(){
+  var words = getColumn("Wordle", "validWordleAnswer");
+  var todaysWordle = words[randomNumber(0, 2307)];
+  return todaysWordle;
+}
+
+
+//generates a word for wordle
+//parameter {none} - needs wordle library
+//return {string} - returns a word for wordle
+onEvent("reset_Button", "click", function( ) {
+  correctLetters= [];
+  setScreen("wordleScreen");
+  count = 6;
+  lettersCorrect = 0;
+  setText("resultsText", "Letters Correct: " + lettersCorrect);
+  setText("guessText", "Guesses Left: " + count);
+  setText("correctLetters", "Correct Letters:");
+  todaysWord = selectWordle();
+  correct_array = todaysWord.split("");
+  console.log(todaysWord);
+  setProperty("loseImage", "hidden", true);
+  setProperty("winImage", "hidden", true);
+  setProperty("countAnswer", "hidden", true);
+});
+ 
+
+//checks for amount of letters correct
+function answerCheck (guess, todaysWord) {
+  lettersCorrect=0;
+  for (var i = 0; i < 5; i++) {
+    if (guess[i]== todaysWord[i]) {
+      lettersCorrect++;
+      
+    }
+  }
+  count--;
+  if (count==5 && lettersCorrect==5) {
+    setText("countAnswer", "You got it in the first try!");
+  } else {
+    setText("countAnswer", "You got it with " + count + " guesses left!");
+  }
+  if (lettersCorrect==5) {
+    setScreen ("resultScreen");
+    setProperty("winImage", "hidden", false);
+    setProperty("winText", "hidden", false);
+    setProperty("reset_Button", "hidden", false);
+    setText("todaysWordle", "Today's Word Was: " + todaysWord);
+    setProperty("countAnswer", "hidden", false);
+  }
+  else if (count==-1) {
+    setScreen ("resultScreen");
+    setProperty("loseImage", "hidden", false);
+    setProperty("loseText", "hidden", false);
+    setProperty("reset_Button", "hidden", false);
+    setText("todaysWordle", "Today's Word Was: " + todaysWord);
+  }else{
+  setText("resultsText", "Letters Correct: " + lettersCorrect);
+  setText("guessText", "Guesses Left: " + count);
+  setText("guessText", "Guesses Left: " + count);
+
+  }
+}
+function letterCheck (guess_array) {
+  for (var i = 0; i < 5; i++) {
+    appendItem(usedLetters, guess_array[i]);
+    if (guess_array[i]==correct_array[i]) {
+      appendItem(correctLetters, correct_array[i]);
+      setText("correctLetters", "Correct Letters: " + correctLetters.toString());
+    }
+  }
+}
