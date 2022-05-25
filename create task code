@@ -1,3 +1,4 @@
+// by: Benson Yeung
 var todaysWord = "";
 todaysWord = selectWordle();
 console.log(todaysWord);
